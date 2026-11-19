@@ -1,0 +1,913 @@
+<title>장기재고 현황판</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@700&display=swap">
+
+<style>
+/* Layout: Hansol Paper corporate aesthetic — deep forest green, clean white, bold KR typography */
+:root {
+  --green-dark:  #ffffff;
+  --green-mid:   #f0f4f0;
+  --green-light: #2d6a4f;
+  --green-pale:  #e8f5e9;
+  --accent:      #2d6a4f;
+  --accent-dim:  #52b788;
+  --bg:          #f5f7f5;
+  --surface:     #ffffff;
+  --border:      #d8e4da;
+  --fg:          #111c16;
+  --fg2:         #2d6a4f;
+  --fg3:         #6a8c76;
+  --danger:      #c0392b;
+  --warn:        #d35400;
+  --tag-bg:      #e8f5e9;
+  --shadow-sm:   0 1px 4px rgba(0,0,0,0.07);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.12);
+  --radius:      8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --green-dark:  #0f2318;
+    --green-mid:   #1a4030;
+    --green-light: #3a8f68;
+    --green-pale:  #1a3528;
+    --accent:      #95c11f;
+    --accent-dim:  #7aa518;
+    --bg:          #0d1a12;
+    --surface:     #122018;
+    --border:      #1e3528;
+    --fg:          #e8f5ed;
+    --fg2:         #9ec4ae;
+    --fg3:         #567a65;
+    --tag-bg:      #1a3528;
+    --shadow-sm:   0 1px 4px rgba(0,0,0,0.3);
+    --shadow-md:   0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg:   0 8px 32px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --green-dark:  #0f2318;
+  --green-mid:   #1a4030;
+  --green-light: #3a8f68;
+  --green-pale:  #1a3528;
+  --accent:      #95c11f;
+  --accent-dim:  #7aa518;
+  --bg:          #0d1a12;
+  --surface:     #122018;
+  --border:      #1e3528;
+  --fg:          #e8f5ed;
+  --fg2:         #9ec4ae;
+  --fg3:         #567a65;
+  --tag-bg:      #1a3528;
+  --shadow-sm:   0 1px 4px rgba(0,0,0,0.3);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── TOP NOTICE BAR ── */
+.notice-bar {
+  background: var(--green-pale);
+  color: var(--fg2);
+  font-size: 12px;
+  padding: 6px max(20px, env(safe-area-inset-left,0px));
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.notice-dot { width:7px; height:7px; border-radius:50%; background: var(--accent); flex-shrink:0; }
+.notice-date { color: var(--fg3); }
+
+/* ── HEADER ── */
+.site-header {
+  background: #ffffff;
+  border-bottom: 1.5px solid var(--border);
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: #ffffff;
+  z-index: 201;
+}
+.header-inner {
+  padding: 0 max(28px, env(safe-area-inset-left,0px));
+  display: flex; align-items: center; gap: 0;
+  height: 62px;
+}
+.logo-area {
+  display: flex; align-items: center; gap: 12px;
+  margin-right: 40px;
+  flex-shrink: 0;
+}
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: #fff;
+  letter-spacing: -1px;
+}
+.logo-name {
+  color: var(--fg);
+  font-weight: 700; font-size: 17px;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+.logo-dept {
+  font-size: 10px; color: var(--fg3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-top: 2px;
+}
+.header-nav {
+  display: flex; align-items: center; gap: 2px;
+  flex: 1;
+}
+.nav-item {
+  padding: 8px 14px;
+  color: var(--fg3);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--accent);
+  background: var(--green-pale);
+}
+.nav-item.active {
+  color: var(--accent);
+  font-weight: 700;
+}
+.header-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 12px;
+}
+.date-ctrl {
+  display: flex; align-items: center; gap: 8px;
+}
+.date-label-sm {
+  font-size: 11px; color: var(--fg3);
+  letter-spacing: 0.5px; white-space: nowrap;
+}
+.date-select {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  color: var(--fg);
+  border-radius: 5px;
+  padding: 5px 10px 5px 8px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a8c76' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
+  min-width: 140px;
+}
+.date-select option { background: #fff; color: var(--fg); }
+.date-select:focus { border-color: var(--accent); }
+
+/* ── HERO BAND ── */
+.hero {
+  background: linear-gradient(135deg, #f0f7f2 0%, #e8f5e9 100%);
+  border-bottom: 1.5px solid var(--border);
+  padding: 36px max(28px, env(safe-area-inset-left,0px));
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute; right: -60px; top: -60px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(45,106,79,0.05);
+  pointer-events: none;
+}
+.hero-layout {
+  display: flex; align-items: flex-start; gap: 32px;
+  flex-wrap: wrap; max-width: 1100px; margin: 0 auto;
+}
+.hero-left { flex: 1; min-width: 220px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent);
+  background: rgba(45,106,79,0.08);
+  border: 1px solid rgba(45,106,79,0.2);
+  border-radius: 20px; padding: 4px 12px;
+  margin-bottom: 14px;
+}
+.hero-eyebrow::before { content: "●"; font-size: 6px; }
+.hero-title {
+  font-family: 'Noto Serif KR', 'Noto Sans KR', serif;
+  font-weight: 700; font-size: clamp(22px, 4vw, 30px);
+  color: var(--fg); line-height: 1.3; margin: 0 0 8px;
+  text-wrap: balance;
+}
+.hero-title em { color: var(--accent); font-style: normal; }
+.hero-sub {
+  font-size: 13px; color: var(--fg3);
+  margin: 0; max-width: 380px;
+}
+.hero-kpi-row {
+  display: flex; gap: 8px;
+  flex-wrap: wrap; align-items: stretch;
+}
+.hero-kpi {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 14px 20px;
+  min-width: 140px; flex: 1;
+  box-shadow: var(--shadow-sm);
+}
+.kpi-label { font-size: 11px; color: var(--fg3); letter-spacing: 0.3px; margin-bottom: 6px; }
+.kpi-val {
+  font-size: 22px; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent); line-height: 1;
+}
+.kpi-unit { font-size: 12px; font-weight: 500; color: var(--fg3); margin-left: 2px; }
+.kpi-badge {
+  display: inline-block; margin-top: 6px;
+  font-size: 10px; font-weight: 700;
+  color: var(--accent); background: rgba(45,106,79,0.08);
+  border-radius: 3px; padding: 2px 6px;
+}
+
+/* ── MAIN CONTENT ── */
+.content-wrap {
+  max-width: 1100px; margin: 0 auto;
+  padding: 28px max(28px, env(safe-area-inset-left,0px));
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.section-bar {
+  width: 4px; height: 20px; border-radius: 2px;
+  background: var(--accent);
+}
+.section-title {
+  font-weight: 700; font-size: 15px; color: var(--fg);
+  letter-spacing: -0.2px;
+}
+.section-count {
+  margin-left: auto;
+  font-size: 12px; color: var(--fg3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── SALESPERSON GRID ── */
+.sp-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.sp-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 10px 9px;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+  box-shadow: var(--shadow-sm);
+  color: var(--fg);
+  font-family: inherit; text-align: center;
+  flex: 1 1 0; min-width: 90px;
+}
+.sp-btn:hover {
+  border-color: var(--green-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.sp-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(149,193,31,0.2), var(--shadow-md);
+  background: var(--surface);
+}
+.sp-avatar { display: none; }
+.sp-btn-all {
+  border: 2px solid var(--accent);
+}
+.sp-btn-total {
+  border: 2px solid var(--green-light);
+}
+.sp-name { font-weight: 700; font-size: 13px; }
+.sp-wt {
+  font-size: 11px; color: var(--fg3);
+  font-variant-numeric: tabular-nums;
+}
+.sp-tag {
+  font-size: 10px; font-weight: 700;
+  color: var(--fg); background: var(--tag-bg);
+  border-radius: 10px; padding: 1px 7px;
+}
+.sp-btn.active .sp-tag {
+  color: var(--fg); background: var(--tag-bg);
+}
+
+/* ── DETAIL PANEL ── */
+.detail-panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.detail-top {
+  background: var(--green-dark);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.detail-info { flex: 1; min-width: 180px; }
+.detail-name {
+  font-weight: 900; font-size: 18px; color: #fff;
+  letter-spacing: -0.5px;
+}
+.detail-meta {
+  font-size: 11px; color: rgba(255,255,255,0.45);
+  margin-top: 2px; letter-spacing: 0.3px;
+}
+.detail-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.chip {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.chip.hl { background: var(--accent); color: var(--green-dark); border-color: var(--accent); }
+.detail-total-box {
+  text-align: right; flex-shrink: 0;
+}
+.total-label { font-size: 11px; color: rgba(255,255,255,0.45); }
+.total-val {
+  font-size: 24px; font-weight: 900;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.total-unit { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: var(--tag-bg);
+  color: var(--fg2); font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 10px 14px; text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap; position: sticky; top: 0; z-index: 1;
+}
+thead th.r { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--tag-bg); }
+tbody td { padding: 10px 14px; vertical-align: middle; }
+td.r { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+td.aging-cell {
+  font-weight: 900; font-size: 13px; color: var(--danger);
+  font-variant-numeric: tabular-nums;
+}
+td.aging-cell.mid { color: var(--warn); }
+td.aging-cell.low { color: var(--fg2); font-weight: 700; }
+.bh-tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 2px 7px; border-radius: 10px;
+  white-space: nowrap;
+}
+.bh-180 { background: #fde8e8; color: #c0392b; }
+.bh-90  { background: #fef3e2; color: #d35400; }
+.bh-60  { background: #edf5ef; color: #2d6a4f; }
+.bh-60m { background: var(--tag-bg); color: var(--fg3); }
+.fac-chip {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 4px;
+  background: var(--green-pale); color: var(--green-mid);
+  white-space: nowrap;
+}
+.prod-name { font-weight: 500; }
+.cust-name { color: var(--fg2); font-size: 12px; }
+.row-num { color: var(--fg3); font-size: 12px; }
+
+/* filter bar */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 16px;
+  background: var(--tag-bg);
+  border-bottom: 1px solid var(--border);
+}
+.filter-label { font-size: 11px; color: var(--fg3); font-weight: 700; letter-spacing: 0.4px; white-space: nowrap; }
+.filter-select {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--fg);
+  border-radius: 6px;
+  padding: 5px 24px 5px 10px;
+  font-size: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; outline: none;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5' fill='none'%3E%3Cpath d='M1 1l3.5 3L8 1' stroke='%23718096' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  min-width: 120px;
+  transition: border-color 0.15s;
+}
+.filter-select:focus { border-color: var(--accent); }
+.filter-select.active { border-color: var(--green-light); background-color: var(--green-pale); color: var(--green-mid); font-weight: 700; }
+.filter-reset {
+  margin-left: auto;
+  font-size: 11px; font-weight: 700;
+  color: var(--fg3); background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 6px; padding: 5px 10px;
+  cursor: pointer; font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+.filter-reset:hover { color: var(--danger); border-color: var(--danger); }
+.filter-count {
+  font-size: 11px; color: var(--fg3);
+  white-space: nowrap; margin-left: 4px;
+}
+
+/* table footer */
+tfoot td {
+  padding: 10px 14px; font-weight: 900;
+  background: var(--green-dark); color: #fff;
+  border-top: 2px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+tfoot td.r { text-align: right; }
+tfoot .foot-label { color: var(--accent); font-size: 12px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 56px 24px;
+  text-align: center; color: var(--fg3);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.empty-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--tag-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.empty-title { font-size: 15px; color: var(--fg2); font-weight: 700; }
+.empty-sub { font-size: 13px; max-width: 260px; }
+.empty-arrow {
+  font-size: 20px; color: var(--accent);
+  animation: bounce 1.6s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (max-width: 600px) {
+  .header-inner { padding: 0 16px; height: 54px; }
+  .header-nav { display: none; }
+  .hero { padding: 24px 16px; }
+  .hero-kpi { padding: 10px 14px; min-width: 120px; }
+  .kpi-val { font-size: 18px; }
+  .content-wrap { padding: 20px 16px; }
+  .sp-btn { padding: 8px 6px 7px; min-width: 76px; }
+  .sp-avatar { display: none; }
+  .detail-top { padding: 12px 14px; }
+  .detail-name { font-size: 15px; }
+  .total-val { font-size: 18px; }
+}
+</style>
+
+<!-- Notice bar -->
+<div class="notice-bar">
+  <div class="notice-dot"></div>
+  <span>샘플 데이터 표시 중 · 매일 SAP 가공 후 JSON 업로드 시 자동 갱신됩니다</span>
+  <span class="notice-date" id="todayLabel"></span>
+</div>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-icon">HS</div>
+      <div>
+        <div class="logo-name">한솔제지</div>
+        <div class="logo-dept">Inventory Monitor</div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <div class="nav-item active">장기재고 현황</div>
+      <div class="nav-item">영업사원별</div>
+      <div class="nav-item">공장별</div>
+    </nav>
+    <div class="header-right">
+      <div class="date-ctrl">
+        <span class="date-label-sm">기준일자</span>
+        <select class="date-select" id="dateSelect" onchange="onDateChange(this.value)">
+          <option value="2026-11-19">2026-11-19 (최신)</option>
+          <option value="2026-11-18">2026-11-18</option>
+          <option value="2026-11-15">2026-11-15</option>
+          <option value="2026-11-14">2026-11-14</option>
+          <option value="2026-11-13">2026-11-13</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero band -->
+<section class="hero">
+  <div class="hero-layout">
+    <div class="hero-left">
+      <div class="hero-eyebrow">장기재고 모니터링</div>
+      <h1 class="hero-title">내수 <em>60일 이상</em><br>장기재고 현황</h1>
+      <p class="hero-sub">영업사원 이름을 클릭하면 보유 재고 목록을 확인할 수 있습니다.<br>기준일자를 변경하면 과거 데이터와 비교할 수 있습니다.</p>
+    </div>
+    <div class="hero-kpi-row" id="heroKpi">
+      <!-- JS fill -->
+    </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<div class="content-wrap">
+  <!-- Salesperson section -->
+  <div class="section-label">
+    <div class="section-bar"></div>
+    <div class="section-title">영업사원별 장기재고 현황</div>
+    <div class="section-count" id="spCount">— 명</div>
+  </div>
+  <div class="sp-grid" id="spGrid"></div>
+
+  <!-- Detail -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="empty-state">
+      <div class="empty-arrow">↑</div>
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">영업사원을 선택하세요</div>
+      <div class="empty-sub">이름 버튼을 클릭하면 해당 영업사원의 상세 장기재고 목록이 표시됩니다</div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\./g,' ').trim();
+
+let BASE_ROWS = [
+  {emp:"박지훈",fac:"천안",prod:"한솔감열지Pro",color:"백",bw:80,w:1091,len:12000,cust:"대진지업(주)",aging:117,bh:"90일이상",wt:36.96},
+  {emp:"박지훈",fac:"천안",prod:"한솔감열지Pro(SFT)",color:"백",bw:80,w:1530,len:10000,cust:"범창페이퍼(주)",aging:339,bh:"180일이상",wt:11.32},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지PF(EL) 신탄진",color:"백",bw:70,w:1600,len:16300,cust:"주식회사 한엘",aging:73,bh:"60일이상",wt:14.27},
+  {emp:"박지훈",fac:"장항",prod:"한솔감열지SF 장항",color:"백",bw:65,w:1090,len:16000,cust:"대진지업(주)",aging:208,bh:"180일이상",wt:31.97},
+  {emp:"정태양",fac:"장항",prod:"Hi-Q라벨CCK(IT)",color:"백",bw:70,w:1530,len:16300,cust:"태양페이퍼",aging:333,bh:"180일이상",wt:11.37},
+  {emp:"정태양",fac:"신탄진",prod:"한솔감열지(SL) HB 신탄진",color:"백",bw:70,w:1097,len:10000,cust:"동양제지",aging:88,bh:"60일이상",wt:10.94},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지PF(HT)",color:"백",bw:90,w:545,len:12000,cust:"주식회사 한엘",aging:221,bh:"180일이상",wt:13.61},
+  {emp:"정태양",fac:"천안",prod:"한솔감열지SF",color:"백",bw:70,w:960,len:12000,cust:"태양페이퍼",aging:194,bh:"180일이상",wt:19.01},
+  {emp:"김민준",fac:"장항",prod:"Hi-Q라벨CCK(IT)",color:"백",bw:70,w:1530,len:10000,cust:"매직페이퍼주식회사",aging:336,bh:"180일이상",wt:46.49},
+  {emp:"박지훈",fac:"신탄진",prod:"한솔감열지SF(EL) RC 신탄진",color:"백",bw:80,w:1130,len:10000,cust:"대진지업(주)",aging:217,bh:"180일이상",wt:36.73},
+  {emp:"김민준",fac:"신탄진",prod:"한솔감열지SF(EL) RC 신탄진",color:"백",bw:80,w:1130,len:15000,cust:"매직페이퍼주식회사",aging:95,bh:"90일이상",wt:26.62},
+  {emp:"최수빈",fac:"신탄진",prod:"한솔감열지PF(TITO) 신탄진",color:"백",bw:75,w:1091,len:15000,cust:"한솔(공용/자가소비)",aging:276,bh:"180일이상",wt:22.19},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지PF(EL) 신탄진",color:"백",bw:65,w:1600,len:10000,cust:"한솔피엔에스주식회사",aging:291,bh:"180일이상",wt:29.62},
+  {emp:"이서연",fac:"천안",prod:"Hi-Q라벨글라신지Plus",color:"블루",bw:60,w:1094,len:10000,cust:"주식회사 한엘",aging:172,bh:"90일이상",wt:43.05},
+  {emp:"정태양",fac:"장항",prod:"Hi-Q라벨CCK",color:"백",bw:65,w:1096,len:12000,cust:"태양페이퍼",aging:323,bh:"180일이상",wt:36.31},
+  {emp:"박지훈",fac:"신탄진",prod:"한솔감열지(SL) HB 신탄진",color:"백",bw:70,w:1097,len:16000,cust:"범창페이퍼(주)",aging:115,bh:"90일이상",wt:9.58},
+  {emp:"박지훈",fac:"신탄진",prod:"한솔감열지PF(CL) 신탄진",color:"백",bw:65,w:1085,len:10000,cust:"범창페이퍼(주)",aging:187,bh:"180일이상",wt:46.36},
+  {emp:"정태양",fac:"신탄진",prod:"Hi-Q라벨SCK",color:"백",bw:80,w:620,len:16300,cust:"태양페이퍼",aging:89,bh:"60일이상",wt:24.10},
+  {emp:"박지훈",fac:"신탄진",prod:"한솔감열지PF(EL) 신탄진",color:"백",bw:70,w:1600,len:16300,cust:"대진지업(주)",aging:140,bh:"90일이상",wt:3.86},
+  {emp:"정태양",fac:"천안",prod:"Hi-Q라벨글라신지Plus",color:"블루",bw:60,w:1094,len:16000,cust:"태양페이퍼",aging:266,bh:"180일이상",wt:33.04},
+  {emp:"이서연",fac:"장항",prod:"Hi-Q라벨CCK Plus",color:"백",bw:60,w:1094,len:10000,cust:"주식회사 한엘",aging:97,bh:"90일이상",wt:44.02},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지(SL) 신탄진",color:"백",bw:75,w:1525,len:16300,cust:"주식회사 한엘",aging:205,bh:"180일이상",wt:15.32},
+  {emp:"김민준",fac:"천안",prod:"한솔감열지Pro(SFT)",color:"백",bw:80,w:1530,len:15000,cust:"유호페이퍼",aging:113,bh:"90일이상",wt:14.45},
+  {emp:"김민준",fac:"신탄진",prod:"Hi-Q라벨SCK",color:"백",bw:90,w:545,len:10000,cust:"유호페이퍼",aging:235,bh:"180일이상",wt:5.07},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지Green(EL)HB Slim",color:"백",bw:75,w:1020,len:12000,cust:"주식회사 한엘",aging:201,bh:"180일이상",wt:37.19},
+  {emp:"강하은",fac:"신탄진",prod:"한솔감열지PF(EL)HB Slim",color:"백",bw:75,w:2018,len:15000,cust:"삼성포장재",aging:278,bh:"180일이상",wt:29.33},
+  {emp:"정태양",fac:"장항",prod:"Hi-Q라벨CCK(HB)",color:"백",bw:70,w:1096,len:15000,cust:"태양페이퍼",aging:280,bh:"180일이상",wt:10.90},
+  {emp:"강하은",fac:"신탄진",prod:"한솔감열지SF(CL) 신탄진",color:"백",bw:65,w:1096,len:16300,cust:"삼성포장재",aging:335,bh:"180일이상",wt:16.04},
+  {emp:"박지훈",fac:"신탄진",prod:"한솔감열지(CL) 신탄진",color:"백",bw:70,w:1097,len:16000,cust:"범창페이퍼(주)",aging:206,bh:"180일이상",wt:33.94},
+  {emp:"김민준",fac:"신탄진",prod:"한솔감열지PF(EL) 신탄진",color:"백",bw:75,w:1600,len:10000,cust:"유호페이퍼",aging:302,bh:"180일이상",wt:41.01},
+  {emp:"최수빈",fac:"천안",prod:"한솔감열지Pro",color:"백",bw:80,w:1520,len:10000,cust:"한솔(공용/자가소비)",aging:62,bh:"60일이상",wt:28.09},
+  {emp:"김민준",fac:"장항",prod:"Hi-Q라벨CCK Plus",color:"백",bw:65,w:1094,len:16300,cust:"유호페이퍼",aging:293,bh:"180일이상",wt:22.57},
+  {emp:"김민준",fac:"장항",prod:"Hi-Q라벨CCK",color:"백",bw:70,w:1096,len:10000,cust:"유호페이퍼",aging:206,bh:"180일이상",wt:7.35},
+  {emp:"박지훈",fac:"천안",prod:"Hi-Q라벨글라신지Plus",color:"블루",bw:60,w:1094,len:16000,cust:"대진지업(주)",aging:256,bh:"180일이상",wt:16.88},
+  {emp:"최수빈",fac:"신탄진",prod:"한솔감열지PF(CL) 신탄진",color:"백",bw:70,w:1085,len:16300,cust:"한솔(공용/자가소비)",aging:272,bh:"180일이상",wt:19.33},
+  {emp:"김민준",fac:"신탄진",prod:"한솔감열지(SL) 신탄진",color:"백",bw:65,w:1525,len:12000,cust:"매직페이퍼주식회사",aging:174,bh:"90일이상",wt:42.04},
+  {emp:"최수빈",fac:"신탄진",prod:"한솔감열지PF(TITO) 신탄진",color:"백",bw:70,w:1091,len:16000,cust:"지정되지 않음",aging:138,bh:"90일이상",wt:35.12},
+  {emp:"정태양",fac:"장항",prod:"한솔감열지SF 장항",color:"백",bw:60,w:1090,len:10000,cust:"동양제지",aging:248,bh:"180일이상",wt:29.14},
+  {emp:"정태양",fac:"신탄진",prod:"한솔감열지(CL) 신탄진",color:"백",bw:75,w:1097,len:10000,cust:"태양페이퍼",aging:121,bh:"90일이상",wt:25.55},
+  {emp:"최수빈",fac:"천안",prod:"한솔감열지Pro(TITO)",color:"백",bw:80,w:1091,len:16000,cust:"지정되지 않음",aging:201,bh:"180일이상",wt:24.68},
+  {emp:"김민준",fac:"천안",prod:"Hi-Q라벨 글라신지",color:"백",bw:180,w:960,len:12000,cust:"매직페이퍼주식회사",aging:333,bh:"180일이상",wt:32.07},
+  {emp:"최수빈",fac:"장항",prod:"한솔감열지SF 장항",color:"백",bw:65,w:1090,len:16000,cust:"한솔(공용/자가소비)",aging:311,bh:"180일이상",wt:17.36},
+  {emp:"김민준",fac:"천안",prod:"한솔감열지Pro(SFT)",color:"백",bw:80,w:1530,len:10000,cust:"매직페이퍼주식회사",aging:87,bh:"60일이상",wt:28.12},
+  {emp:"박지훈",fac:"신탄진",prod:"Hi-Q라벨C1S",color:"백",bw:65,w:1310,len:12000,cust:"범창페이퍼(주)",aging:110,bh:"90일이상",wt:12.37},
+  {emp:"최수빈",fac:"신탄진",prod:"한솔감열지PF(EL)HB Slim",color:"백",bw:80,w:2018,len:15000,cust:"지정되지 않음",aging:98,bh:"90일이상",wt:2.12},
+  {emp:"강하은",fac:"천안",prod:"Hi-Q라벨 글라신지",color:"백",bw:180,w:960,len:12000,cust:"삼성포장재",aging:106,bh:"90일이상",wt:23.79},
+  {emp:"강하은",fac:"신탄진",prod:"한솔감열지(CL) 신탄진",color:"백",bw:70,w:1097,len:15000,cust:"코리아페이퍼",aging:265,bh:"180일이상",wt:6.24},
+  {emp:"최수빈",fac:"장항",prod:"한솔감열지SF 장항",color:"백",bw:65,w:1060,len:12000,cust:"한솔(공용/자가소비)",aging:266,bh:"180일이상",wt:26.16},
+  {emp:"강하은",fac:"천안",prod:"한솔감열지Pro(TITO)",color:"백",bw:80,w:1091,len:16300,cust:"코리아페이퍼",aging:308,bh:"180일이상",wt:1.18},
+  {emp:"김민준",fac:"신탄진",prod:"한솔감열지Green(EL)HB Slim",color:"백",bw:75,w:1020,len:16000,cust:"유호페이퍼",aging:107,bh:"90일이상",wt:46.67},
+];
+
+let SHORT_ROWS = [
+  {emp:"박지훈",fac:"천안",prod:"한솔감열지Pro",color:"백",bw:80,w:1091,len:10000,cust:"대진지업(주)",aging:45,bh:"60일미만",wt:18.50},
+  {emp:"이서연",fac:"신탄진",prod:"한솔감열지PF(CL) 신탄진",color:"백",bw:70,w:1085,len:12000,cust:"주식회사 한엘",aging:38,bh:"60일미만",wt:22.14},
+  {emp:"정태양",fac:"장항",prod:"Hi-Q라벨CCK",color:"백",bw:65,w:1096,len:10000,cust:"태양페이퍼",aging:52,bh:"60일미만",wt:9.87},
+  {emp:"김민준",fac:"신탄진",prod:"한솔감열지SF",color:"백",bw:70,w:960,len:12000,cust:"매직페이퍼주식회사",aging:28,bh:"60일미만",wt:31.20},
+  {emp:"강하은",fac:"천안",prod:"Hi-Q라벨CCK Plus",color:"백",bw:60,w:1094,len:10000,cust:"삼성포장재",aging:15,bh:"60일미만",wt:14.65},
+  {emp:"최수빈",fac:"장항",prod:"한솔감열지SF 장항",color:"백",bw:65,w:1090,len:10000,cust:"한솔(공용/자가소비)",aging:7,bh:"60일미만",wt:8.33},
+];
+
+function getRows(d) {
+  return BASE_ROWS; // 60일이상
+}
+function getAllRows(d) {
+  return [...BASE_ROWS, ...SHORT_ROWS]; // 전체
+}
+
+function fmt(n){ return n.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+let currentDate = "2026-11-19";
+let selectedEmp = null;
+let empMap = {};
+
+function buildEmpMap(rows) {
+  empMap = {};
+  for (const r of rows) {
+    if (!empMap[r.emp]) empMap[r.emp] = {total:0, count:0, rows:[]};
+    empMap[r.emp].total += r.wt;
+    empMap[r.emp].count++;
+    empMap[r.emp].rows.push(r);
+  }
+  for (const k in empMap) empMap[k].total = +empMap[k].total.toFixed(2);
+}
+
+function renderHeroKpi(rows) {
+  const totalWt = rows.reduce((s,r)=>s+r.wt,0);
+  const empCount = Object.keys(empMap).length;
+  const maxAging = rows.length ? Math.max(...rows.map(r=>r.aging)) : 0;
+  document.getElementById('heroKpi').innerHTML = [
+    {label:'총 장기재고', val:fmt(totalWt), unit:'ton', badge:'내수 180일+'},
+    {label:'담당 영업사원', val:empCount, unit:'명', badge:'장기재고 보유'},
+    {label:'총 항목 수', val:rows.length, unit:'건', badge:'전체'},
+    {label:'최장 보유일수', val:maxAging, unit:'일', badge:'최고 aging'},
+  ].map(k=>`
+    <div class="hero-kpi">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}<span class="kpi-unit">${k.unit}</span></div>
+      <div class="kpi-badge">${k.badge}</div>
+    </div>
+  `).join('');
+}
+
+function renderGrid() {
+  const names = Object.keys(empMap).sort();
+  document.getElementById('spCount').textContent = names.length + '명';
+  const allRows = getRows(currentDate);
+  const allTotal = allRows.reduce((s,r)=>s+r.wt,0);
+  const totalRows = getAllRows(currentDate);
+  const totalWt = totalRows.reduce((s,r)=>s+r.wt,0);
+  const allActive = selectedEmp === '__ALL__';
+  const totalActive = selectedEmp === '__TOTAL__';
+  const allBtn = `
+    <button class="sp-btn sp-btn-total${totalActive?' active':''}" onclick="selectEmp('__TOTAL__')">
+      <div class="sp-avatar sp-avatar-total">총</div>
+      <div class="sp-name">총재고</div>
+      <div class="sp-wt">${fmt(totalWt)} ton</div>
+      <div class="sp-tag">${totalRows.length}건</div>
+    </button>
+    <button class="sp-btn sp-btn-all${allActive?' active':''}" onclick="selectEmp('__ALL__')">
+      <div class="sp-avatar sp-avatar-all">장</div>
+      <div class="sp-name">장기성</div>
+      <div class="sp-wt">${fmt(allTotal)} ton</div>
+      <div class="sp-tag">${allRows.length}건</div>
+    </button>`;
+  document.getElementById('spGrid').innerHTML = allBtn + names.map(n => {
+    const info = empMap[n];
+    const active = n === selectedEmp;
+    return `
+      <button class="sp-btn${active?' active':''}" onclick="selectEmp('${n}')">
+        <div class="sp-avatar">${n.charAt(0)}</div>
+        <div class="sp-name">${n}</div>
+        <div class="sp-wt">${fmt(info.total)} ton</div>
+        <div class="sp-tag">${info.count}건</div>
+      </button>`;
+  }).join('');
+}
+
+// detail filter state
+let detailFilter = { fac: '', prod: '', bh: '', cust: '', emp: '', bw: '', w: '' };
+
+function renderDetail(empName) {
+  const panel = document.getElementById('detailPanel');
+  if (!empName || (empName !== '__ALL__' && empName !== '__TOTAL__' && !empMap[empName])) {
+    detailFilter = { fac: '', prod: '', bh: '', cust: '', emp: '', bw: '', w: '' };
+    panel.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-arrow">↑</div>
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">영업사원을 선택하세요</div>
+        <div class="empty-sub">이름 버튼을 클릭하면 해당 영업사원의 상세 장기재고 목록이 표시됩니다</div>
+      </div>`;
+    return;
+  }
+  const isAll = empName === '__ALL__';
+  const isTotal = empName === '__TOTAL__';
+  const allData = getRows(currentDate);
+  const totalData = getAllRows(currentDate);
+  const info = isAll
+    ? { rows: allData,   total: allData.reduce((s,r)=>s+r.wt,0),   count: allData.length,   label: '장기성' }
+    : isTotal
+    ? { rows: totalData, total: totalData.reduce((s,r)=>s+r.wt,0), count: totalData.length, label: '총재고' }
+    : { ...empMap[empName], label: empName };
+
+  // unique option values
+  const facOpts = [...new Set(info.rows.map(r=>r.fac))].sort();
+  const prodOpts = [...new Set(info.rows.map(r=>r.prod))].sort();
+  const bhOrder = ['180일이상','90일이상','60일이상','60일미만'];
+  const bhOpts = bhOrder.filter(b => info.rows.some(r=>r.bh===b));
+  const custOpts = [...new Set(info.rows.map(r=>r.cust))].sort();
+  const empOpts = [...new Set(info.rows.map(r=>r.emp))].sort();
+  const bwOpts = [...new Set(info.rows.map(r=>r.bw))].sort((a,b)=>a-b);
+  const wOpts  = [...new Set(info.rows.map(r=>r.w))].sort((a,b)=>a-b);
+
+  // apply filters + sort by 공장 → aging desc
+  let rows = info.rows.filter(r =>
+    (!detailFilter.fac  || r.fac  === detailFilter.fac) &&
+    (!detailFilter.prod || r.prod === detailFilter.prod) &&
+    (!detailFilter.bh   || r.bh   === detailFilter.bh)  &&
+    (!detailFilter.cust || r.cust === detailFilter.cust) &&
+    (!detailFilter.emp  || r.emp  === detailFilter.emp)  &&
+    (!detailFilter.bw   || r.bw   == detailFilter.bw)   &&
+    (!detailFilter.w    || r.w    == detailFilter.w)
+  );
+  rows = rows.sort((a,b) => {
+    if (a.fac < b.fac) return -1;
+    if (a.fac > b.fac) return 1;
+    if (a.prod < b.prod) return -1;
+    if (a.prod > b.prod) return 1;
+    return b.aging - a.aging;
+  });
+  const filtTotal = rows.reduce((s,r)=>s+r.wt, 0);
+  const isFiltered = detailFilter.fac || detailFilter.prod || detailFilter.bh || detailFilter.cust || detailFilter.emp || detailFilter.bw || detailFilter.w;
+
+  function selOpts(arr, val) {
+    return `<option value="">전체</option>` + arr.map(v=>`<option value="${v}"${v===val?' selected':''}>${v}</option>`).join('');
+  }
+
+  panel.innerHTML = `
+    <div class="detail-top">
+      <div class="detail-info">
+        <div class="detail-name">${info.label}</div>
+        <div class="detail-meta">기준일: ${currentDate} &nbsp;·&nbsp; 판매경로: 내수 &nbsp;·&nbsp; 60일 이상</div>
+        <div class="detail-chips">
+          <span class="chip hl">전체 ${info.count}건</span>
+          <span class="chip">내수</span>
+          <span class="chip">60일+</span>
+        </div>
+      </div>
+      <div class="detail-total-box">
+        <div class="total-label">총 재고중량</div>
+        <div class="total-val">${fmt(info.total)}<span class="total-unit"> ton</span></div>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">필터</span>
+      <select class="filter-select${detailFilter.fac?' active':''}" onchange="applyFilter('fac',this.value)">
+        <option value="" disabled selected style="display:none">공장</option>
+        ${selOpts(facOpts, detailFilter.fac)}
+      </select>
+      <select class="filter-select${detailFilter.prod?' active':''}" onchange="applyFilter('prod',this.value)">
+        <option value="" disabled selected style="display:none">지종명</option>
+        ${selOpts(prodOpts, detailFilter.prod)}
+      </select>
+      ${isAll?`<select class="filter-select${detailFilter.emp?' active':''}" onchange="applyFilter('emp',this.value)">
+        <option value="" disabled selected style="display:none">영업사원</option>
+        ${selOpts(empOpts, detailFilter.emp)}
+      </select>`:''}
+      <select class="filter-select${detailFilter.cust?' active':''}" onchange="applyFilter('cust',this.value)">
+        <option value="" disabled selected style="display:none">거래선</option>
+        ${selOpts(custOpts, detailFilter.cust)}
+      </select>
+      <select class="filter-select${detailFilter.bw?' active':''}" onchange="applyFilter('bw',this.value)">
+        <option value="" disabled selected style="display:none">평량</option>
+        ${selOpts(bwOpts, detailFilter.bw)}
+      </select>
+      <select class="filter-select${detailFilter.w?' active':''}" onchange="applyFilter('w',this.value)">
+        <option value="" disabled selected style="display:none">가로</option>
+        ${selOpts(wOpts, detailFilter.w)}
+      </select>
+      <select class="filter-select${detailFilter.bh?' active':''}" onchange="applyFilter('bh',this.value)">
+        <option value="" disabled selected style="display:none">보유기한</option>
+        ${selOpts(bhOpts, detailFilter.bh)}
+      </select>
+      ${isFiltered ? `<button class="filter-reset" onclick="resetFilter()">✕ 초기화</button>` : ''}
+      <span class="filter-count">${rows.length}건 / ${fmt(+filtTotal.toFixed(2))} ton</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>공장</th><th>지종명</th><th>색상</th>
+            <th class="r">평량</th><th class="r">가로</th><th class="r">길이</th>
+            <th>거래선</th>${isAll?'<th>영업사원</th>':''}<th>보유기한</th><th class="r">보유(일)</th><th class="r">재고중량(ton)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.length === 0
+            ? `<tr><td colspan="11" style="text-align:center;padding:28px;color:var(--fg3)">해당 조건의 데이터가 없습니다</td></tr>`
+            : rows.map((r,i) => `
+            <tr>
+              <td class="row-num">${i+1}</td>
+              <td><span class="fac-chip">${r.fac}</span></td>
+              <td class="prod-name">${r.prod}</td>
+              <td style="color:var(--fg3)">${r.color === '-' ? '' : r.color}</td>
+              <td class="r">${r.bw}</td>
+              <td class="r">${r.w}</td>
+              <td class="r">${r.len}</td>
+              <td class="cust-name">${r.cust}</td>
+              ${isAll?`<td style="color:var(--fg2);font-weight:600">${r.emp}</td>`:''}
+              <td><span class="bh-tag bh-${r.bh?.replace('일이상','').replace('일미만','m')}">${r.bh||'-'}</span></td>
+              <td class="r ${r.aging>=180?'aging-cell':r.aging>=90?'aging-cell mid':'aging-cell low'}">${r.aging}일</td>
+              <td class="r">${fmt(r.wt)}</td>
+            </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="${isAll?10:9}"><span class="foot-label">${isFiltered?'필터 합계':'합 계'}</span></td>
+            <td></td>
+            <td class="r">${fmt(+filtTotal.toFixed(2))}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
+}
+
+function applyFilter(key, val) {
+  detailFilter[key] = val;
+  renderDetail(selectedEmp);
+}
+
+function resetFilter() {
+  detailFilter = { fac: '', prod: '', bh: '', cust: '', emp: '', bw: '', w: '' };
+  renderDetail(selectedEmp);
+}
+
+function selectEmp(name) {
+  selectedEmp = (selectedEmp === name) ? null : name;
+  renderGrid();
+  renderDetail(selectedEmp);
+  if (selectedEmp) document.getElementById('detailPanel').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function onDateChange(val) {
+  currentDate = val;
+  const rows = getRows(val);
+  buildEmpMap(rows);
+  renderHeroKpi(rows);
+  renderGrid();
+  renderDetail(selectedEmp);
+}
+
+// data.json 로드 (GitHub Pages 배포 시 실제 데이터 사용)
+fetch('data.json')
+  .then(r => r.json())
+  .then(data => {
+    // 60일이상
+    BASE_ROWS = data.rows.filter(r => r.bh !== '60일미만');
+    // 60일미만
+    SHORT_ROWS = data.rows.filter(r => r.bh === '60일미만');
+    // 날짜 업데이트
+    if (data.date) {
+      currentDate = data.date;
+      const sel = document.getElementById('dateSelect');
+      sel.innerHTML = `<option value="${data.date}">${data.date} (최신)</option>`;
+    }
+    onDateChange(currentDate);
+  })
+  .catch(() => {
+    // data.json 없으면 더미 데이터로 실행
+    onDateChange(currentDate);
+  });
+</script>
